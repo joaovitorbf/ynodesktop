@@ -170,6 +170,11 @@ function isConnected(text) {
   return text === "Connected" || text === "接続済み" || text === "已连接" || text === "연결됨" || text === "Conectado" || text === "Connecté(e)" || text === "Verbunden" || text === "Connesso" || text === "В сети" || text === "Đã kết nối" || text === "متصل";
 }
 
+function getLocationFromList(nodeList)
+{
+  return nodeList.item((nodeList.length == 1) ? 0 : 1)?.textContent;
+}
+
 function updatePresence(web, gamename = null) {
   if (!client) return;
   web.executeJavaScript("window.onbeforeunload=null;");
@@ -188,7 +193,7 @@ function updatePresence(web, gamename = null) {
         (function() {
           return {
             name: window.location.pathname.replaceAll('/', ''),
-            location: document.querySelector("#locationText > a")?.textContent,
+            locationList: document.querySelector("#locationText")?.querySelectorAll("a"),
             connected: document.querySelector("#connStatusText")?.textContent
           }
         })()
@@ -207,7 +212,7 @@ function updatePresence(web, gamename = null) {
           smallImageKey: "yno-logo",
           smallImageText: "Yume Nikki Online Project",
           details: "Dreaming on " + gamename,
-          state: isConnected(data.connected) ? data.location : undefined,
+          state: isConnected(data.connected) ? getLocationFromList(data.locationList) : undefined,
           instance: false,
         });
       });
