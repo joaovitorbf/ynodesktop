@@ -170,8 +170,7 @@ function isConnected(text) {
   return text === "Connected" || text === "接続済み" || text === "已连接" || text === "연결됨" || text === "Conectado" || text === "Connecté(e)" || text === "Verbunden" || text === "Connesso" || text === "В сети" || text === "Đã kết nối" || text === "متصل";
 }
 
-function getLocationFromList(nodeList)
-{
+function getLocationFromList(nodeList) {
   return nodeList.item((nodeList.length == 1) ? 0 : 1)?.textContent;
 }
 
