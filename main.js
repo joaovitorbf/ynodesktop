@@ -166,6 +166,10 @@ function clientLoop(win) {
   });
 }
 
+function isConnected(text) {
+  return text === "Connected" || text === "接続済み" || text === "已连接" || text === "연결됨" || text === "Conectado" || text === "Connecté(e)" || text === "Verbunden" || text === "Connesso" || text === "В сети" || text === "Đã kết nối" || text === "متصل";
+}
+
 function updatePresence(web, gamename = null) {
   if (!client) return;
   web.executeJavaScript("window.onbeforeunload=null;");
@@ -203,7 +207,7 @@ function updatePresence(web, gamename = null) {
           smallImageKey: "yno-logo",
           smallImageText: "Yume Nikki Online Project",
           details: "Dreaming on " + gamename,
-          state: data.connected === "Connected" ? data.location : undefined,
+          state: isConnected(data.connected) ? data.location : undefined,
           instance: false,
         });
       });
