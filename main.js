@@ -244,7 +244,6 @@ function updatePresence(web, gamename = null) {
           instance: false,
           buttons: activityButtons
         });
-
       });
   }
 }
