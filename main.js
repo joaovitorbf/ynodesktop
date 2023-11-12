@@ -193,6 +193,7 @@ function updatePresence(web, gamename = null) {
       largeImageText: "Yume Nikki Online Project",
       details: "Choosing a game...",
       instance: false,
+      buttons: [{label: "Play YNOproject", url: `https://ynoproject.net/`}]
     });
   } else {
     web
@@ -243,34 +244,6 @@ function updatePresence(web, gamename = null) {
           instance: false,
           buttons: activityButtons
         });
-
-
-
-        // function setActivity(data) {
-        //     elapsed = 0
-        //     if(data.locationName == locationCache) return;
-        //     rpc.clearActivity();
-        //     locationCache = data.locationName
-        //     console.log("DATA");
-        //     console.log(data);
-        //     console.log(data.gameURL);
-        //     let activityButtons = [{label: "Play " + data.gameName, url: data.gameURL}];
-        //     if (data.wikiURL) activityButtons.push({label: "Wiki", url: data.wikiURL});
-        //     rpc.setActivity({
-        //         name: "YNO Project - " + data.gameName,
-        //         instance: true,
-        //         details: data.gameName,
-        //         state: data.locationName, //((data.song).length = 1 ? data.song+" " : data.song),
-        //         //largeImageKey: "",//data.artwork,
-        //         //largeImageText: "",//data.album,
-        //         //config.show_heart && data.owned == true ? "heart" : "bandcamp",
-        //         //smallImageText: config.show_heart && data.owned == true ? "💙 supported "+data.artist+" on bandcamp 💙" : "listening on bandcamp",
-        //   buttons: activityButtons
-        //     });
-          
-        //     console.log("Set data in RPC!");
-        // };
-
 
       });
   }
