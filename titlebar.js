@@ -1,7 +1,4 @@
 module.exports = function (win) {
-    if (win.webContents.getURL() !== "https://ynoproject.net/")
-        return;
-    
     win.webContents.executeJavaScript(`
     document.body.insertAdjacentHTML('afterBegin', \`
 
