@@ -86,7 +86,9 @@ const mappedIcons = [
   "prayers",
   "muma",
   "dreamgenie",
-  "mikanmuzou"
+  "mikanmuzou",
+  "ultraviolet",
+  "sheawaits"
 ];
 
 const createWindow = () => {
