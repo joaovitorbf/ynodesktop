@@ -193,6 +193,7 @@ function updatePresence(web, gamename = null) {
       largeImageText: "Yume Nikki Online Project",
       details: "Choosing a game...",
       instance: false,
+      buttons: [{label: "Play YNOproject", url: `https://ynoproject.net/`}]
     });
   } else {
     web
@@ -219,7 +220,8 @@ function updatePresence(web, gamename = null) {
           return {
             name: window.location.pathname.replaceAll('/', ''),
             currentLocation,
-            connected: document.querySelector("#connStatusText")?.textContent
+            connected: document.querySelector("#connStatusText")?.textContent,
+            url: document.URL
           }
         })()
       `
@@ -229,6 +231,7 @@ function updatePresence(web, gamename = null) {
           .toLowerCase()
           .replace(" ", "")
           .replace(".", "");
+        let activityButtons = [{label: "Play " + gamename + " online", url: data.url}];
         client.setActivity({
           largeImageKey: mappedIcons.includes(condensedName)
             ? condensedName + "-icon"
@@ -239,6 +242,7 @@ function updatePresence(web, gamename = null) {
           details: "Dreaming on " + gamename,
           state: isConnected(data.connected) ? data.currentLocation : "Disconnected",
           instance: false,
+          buttons: activityButtons
         });
       });
   }
