@@ -64,7 +64,7 @@ contextMenu({
   ],
 });
 
-const client = new DiscordRPC.Client({ transport: "ipc" });
+var client = new DiscordRPC.Client({ transport: "ipc" });
 client.login({ clientId: "1028080411772977212" }).catch(console.error);
 
 const mappedIcons = [
@@ -185,8 +185,12 @@ function isConnected(text) {
   return text === "Connected" || text === "接続済み" || text === "已连接" || text === "연결됨" || text === "Conectado" || text === "Connecté(e)" || text === "Verbunden" || text === "Connesso" || text === "В сети" || text === "Đã kết nối" || text === "متصل";
 }
 
+function retryConnection(){
+  client = new DiscordRPC.Client({ transport: "ipc" });
+  client.login({ clientId: "1028080411772977212" }).catch(console.error);
+}
+
 function updatePresence(web, gamename = null) {
-  if (!client) return;
   web.executeJavaScript("window.onbeforeunload=null;");
 
   if (gamename == null) {
@@ -196,7 +200,7 @@ function updatePresence(web, gamename = null) {
       details: "Choosing a game...",
       instance: false,
       buttons: [{label: "Play YNOproject", url: `https://ynoproject.net/`}]
-    });
+    }).catch(retryConnection);
   } else {
     web
       .executeJavaScript(
@@ -245,7 +249,7 @@ function updatePresence(web, gamename = null) {
           state: isConnected(data.connected) ? data.currentLocation : "Disconnected",
           instance: false,
           buttons: activityButtons
-        });
+        }).catch(retryConnection);
       });
   }
 }
