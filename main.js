@@ -208,8 +208,6 @@ function updatePresence(web, gamename = null) {
         (function() {
           querys = document.querySelector("#locationText")?.querySelectorAll("a");
 
-          currentLocation = "Loc: ";
-
           if (querys == "undefined" || querys.length < 1)
           {
             currentLocation = "Unknown";
@@ -219,7 +217,7 @@ function updatePresence(web, gamename = null) {
             for (i = 0; i < querys.length; i++)
             {
               isPowerOfTwo = (i % 2) == 0;
-              currentLocation += (!isPowerOfTwo ? "(" : "") + querys.item(i).textContent + (!isPowerOfTwo ? ")" + (i + 1 == querys.length ? "" : " |") : "") + " ";
+              currentLocation = (!isPowerOfTwo ? "(" : "") + querys.item(i).textContent + (!isPowerOfTwo ? ")" + (i + 1 == querys.length ? "" : " |") : "") + " ";
             }
           }
 
