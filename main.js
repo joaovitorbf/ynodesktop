@@ -235,7 +235,7 @@ function updatePresence(web, gamename = null) {
           .toLowerCase()
           .replace(" ", "")
           .replace(".", "");
-        let activityButtons = [{label: "Play " + gamename + " online", url: data.url}];
+        let activityButtons = [{label: "Play " + gamename, url: data.url}];
         client.setActivity({
           largeImageKey: mappedIcons.includes(condensedName)
             ? condensedName + "-icon"
