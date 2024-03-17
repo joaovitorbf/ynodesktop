@@ -177,8 +177,8 @@ app.whenReady().then(() => {
 function clientLoop(win) {
   const web = win.webContents;
   web.executeJavaScript(`document.title`).then((title) => {
-    let splitTitle = title.split(" - ");
-    if (splitTitle[1]?.trim() == "YNOproject") {
+    let splitTitle = title.split(" Online ");
+    if (splitTitle[1]?.trim() == "- YNOproject") {
       if (splitTitle[0].trim() == "ゆめ2っき") {
         updatePresence(web, "Yume 2kki");
       } else {
@@ -258,7 +258,7 @@ function updatePresence(web, gamename = null) {
           .toLowerCase()
           .replace(" ", "")
           .replace(".", "");
-        let activityButtons = [{ label: "Play " + gamename, url: data.url }];
+        let activityButtons = [{ label: "Play " + gamename + " online", url: data.url }];
         client
           .setActivity({
             largeImageKey: mappedIcons.includes(condensedName)
