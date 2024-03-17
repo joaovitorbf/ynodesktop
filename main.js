@@ -61,6 +61,18 @@ contextMenu({
         browserWindow.webContents.openDevTools();
       },
     },
+    {
+      label: "Zoom In",
+      click: () => {
+        browserWindow.webContents.send("zoomin");
+      },
+    },
+    {
+      label: "Zoom Out",
+      click: () => {
+        browserWindow.webContents.send("zoomout");
+      },
+    },
   ],
 });
 
@@ -88,7 +100,7 @@ const mappedIcons = [
   "dreamgenie",
   "mikanmuzou",
   "ultraviolet",
-  "sheawaits"
+  "sheawaits",
 ];
 
 const createWindow = () => {
@@ -152,12 +164,9 @@ app.whenReady().then(() => {
     BrowserWindow.getFocusedWindow().minimize();
   });
   ipcMain.on("maximize", () => {
-    if (isMax)
-    {
+    if (isMax) {
       BrowserWindow.getFocusedWindow().unmaximize();
-    }
-    else
-    {
+    } else {
       BrowserWindow.getFocusedWindow().maximize();
     }
     isMax = !isMax;
@@ -171,7 +180,7 @@ function clientLoop(win) {
     let splitTitle = title.split(" - ");
     if (splitTitle[1]?.trim() == "YNOproject") {
       if (splitTitle[0].trim() == "ゆめ2っき") {
-        updatePresence(web, 'Yume 2kki');
+        updatePresence(web, "Yume 2kki");
       } else {
         updatePresence(web, splitTitle[0].trim());
       }
@@ -182,10 +191,22 @@ function clientLoop(win) {
 }
 
 function isConnected(text) {
-  return text === "Connected" || text === "接続済み" || text === "已连接" || text === "연결됨" || text === "Conectado" || text === "Connecté(e)" || text === "Verbunden" || text === "Connesso" || text === "В сети" || text === "Đã kết nối" || text === "متصل";
+  return (
+    text === "Connected" ||
+    text === "接続済み" ||
+    text === "已连接" ||
+    text === "연결됨" ||
+    text === "Conectado" ||
+    text === "Connecté(e)" ||
+    text === "Verbunden" ||
+    text === "Connesso" ||
+    text === "В сети" ||
+    text === "Đã kết nối" ||
+    text === "متصل"
+  );
 }
 
-function retryConnection(){
+function retryConnection() {
   client = new DiscordRPC.Client({ transport: "ipc" });
   client.login({ clientId: "1028080411772977212" }).catch(console.error);
 }
@@ -194,13 +215,15 @@ function updatePresence(web, gamename = null) {
   web.executeJavaScript("window.onbeforeunload=null;");
 
   if (gamename == null) {
-    client.setActivity({
-      largeImageKey: "yno-logo",
-      largeImageText: "Yume Nikki Online Project",
-      details: "Choosing a game...",
-      instance: false,
-      buttons: [{label: "Play YNOproject", url: `https://ynoproject.net/`}]
-    }).catch(retryConnection);
+    client
+      .setActivity({
+        largeImageKey: "yno-logo",
+        largeImageText: "Yume Nikki Online Project",
+        details: "Choosing a game...",
+        instance: false,
+        buttons: [{ label: "Play YNOproject", url: `https://ynoproject.net/` }],
+      })
+      .catch(retryConnection);
   } else {
     web
       .executeJavaScript(
@@ -235,19 +258,23 @@ function updatePresence(web, gamename = null) {
           .toLowerCase()
           .replace(" ", "")
           .replace(".", "");
-        let activityButtons = [{label: "Play " + gamename, url: data.url}];
-        client.setActivity({
-          largeImageKey: mappedIcons.includes(condensedName)
-            ? condensedName + "-icon"
-            : `https://ynoproject.net/images/door_${data.name}.gif`,
-          largeImageText: gamename,
-          smallImageKey: "yno-logo",
-          smallImageText: "Yume Nikki Online Project",
-          details: "Dreaming on " + gamename,
-          state: isConnected(data.connected) ? data.currentLocation : "Disconnected",
-          instance: false,
-          buttons: activityButtons
-        }).catch(retryConnection);
+        let activityButtons = [{ label: "Play " + gamename, url: data.url }];
+        client
+          .setActivity({
+            largeImageKey: mappedIcons.includes(condensedName)
+              ? condensedName + "-icon"
+              : `https://ynoproject.net/images/door_${data.name}.gif`,
+            largeImageText: gamename,
+            smallImageKey: "yno-logo",
+            smallImageText: "Yume Nikki Online Project",
+            details: "Dreaming on " + gamename,
+            state: isConnected(data.connected)
+              ? data.currentLocation
+              : "Disconnected",
+            instance: false,
+            buttons: activityButtons,
+          })
+          .catch(retryConnection);
       });
   }
 }
@@ -256,8 +283,9 @@ function saveSession() {
   session.defaultSession.cookies
     .get({ url: "https://ynoproject.net" })
     .then((cookies) => {
-      const sess = cookies.find((cookie) => cookie.name == "ynoproject_sessionId");
-      if (sess)
-        store.set("ynoproject_sessionId", sess.value);
+      const sess = cookies.find(
+        (cookie) => cookie.name == "ynoproject_sessionId"
+      );
+      if (sess) store.set("ynoproject_sessionId", sess.value);
     });
 }

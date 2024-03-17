@@ -1,6 +1,14 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer, webFrame } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   minimize: () => ipcRenderer.send("minimize"),
   maximize: () => ipcRenderer.send("maximize"),
 });
+
+ipcRenderer.on("zoomin" , () => {
+  webFrame.setZoomFactor(webFrame.getZoomFactor() + 0.1);
+});
+
+ipcRenderer.on("zoomout" , () => {
+  webFrame.setZoomFactor(webFrame.getZoomFactor() - 0.1);
+}); 
