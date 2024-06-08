@@ -103,6 +103,8 @@ const mappedIcons = [
   "sheawaits",
   "oversomnia",
   "yumetsushin",
+  "nostalgic",
+  "collectiveunconscious"
 ];
 
 const createWindow = () => {
@@ -208,13 +210,17 @@ function isConnected(text) {
   );
 }
 
-function retryConnection() {
+function retryConnection(err) {
+  console.log('Retry IPC')
+  console.log(err)
   client = new DiscordRPC.Client({ transport: "ipc" });
   client.login({ clientId: "1028080411772977212" }).catch(console.error);
 }
 
 function updatePresence(web, gamename = null) {
   web.executeJavaScript("window.onbeforeunload=null;");
+  console.log('Update Presence')
+  console.log(gamename)
 
   if (gamename == null) {
     client
@@ -231,9 +237,12 @@ function updatePresence(web, gamename = null) {
       .executeJavaScript(
         `
         (function() {
-          querys = document.querySelector("#locationText")?.querySelectorAll("a");
+          var querys = document.querySelector("#locationText").querySelectorAll("span") // This seems to be the new location format for C.U.
+          if (querys == null || querys.length < 1) {
+            querys = document.querySelector("#locationText").querySelectorAll("a") // and this is the old format for other games
+          }
 
-          if (querys == "undefined" || querys.length < 1)
+          if (querys == null || querys.length < 1)
           {
             currentLocation = "Unknown";
           }
@@ -260,7 +269,18 @@ function updatePresence(web, gamename = null) {
           .toLowerCase()
           .replace(" ", "")
           .replace(".", "");
-        let activityButtons = [{ label: "Play " + gamename + " online", url: data.url }];
+        let buttonGame = gamename
+        
+        // There is a length limit for activity buttons of 32 chars
+        // so we need to shorten the game name
+        if (gamename == "Collective Unconscious") {
+          buttonGame = "C.U."
+        }
+        else if (gamename.length > 32) {
+          buttonGame = gamename.slice(0, 28) + "..."
+        }
+
+        let activityButtons = [{ label: "Play " + buttonGame + " online", url: data.url }];
         client
           .setActivity({
             largeImageKey: mappedIcons.includes(condensedName)
