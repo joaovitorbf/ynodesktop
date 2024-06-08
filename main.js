@@ -195,19 +195,13 @@ function clientLoop(win) {
 }
 
 function isConnected(text) {
-  return (
-    text === "Connected" ||
-    text === "接続済み" ||
-    text === "已连接" ||
-    text === "연결됨" ||
-    text === "Conectado" ||
-    text === "Connecté(e)" ||
-    text === "Verbunden" ||
-    text === "Connesso" ||
-    text === "В сети" ||
-    text === "Đã kết nối" ||
-    text === "متصل"
-  );
+  privatemodes = ['وضع الخاص', 'Private Mode', 'Private Mode', 'Private Mode', 'Mode privé', 'Private Mode', 'プライベートモード', '비공 개 모드', 'Tryb prywatny', 'Modo Privado', 'Private Mode', 'Приватный режим', 'Private Mode', 'Riêng tư', '私密模式']
+  connecteds = ['متصل', 'Verbunden', 'Connected', 'Conectado', 'Connecté(e)', 'Connesso', '接続済み', '연결됨', 'Połączony', 'Conectado', 'Conectat', 'В сети', 'Bağlı', 'Đã kết nối', '已连接']
+
+  if (privatemodes.includes(text) || connecteds.includes(text)) {
+    return true;
+  }
+  return false;
 }
 
 function retryConnection(err) {
