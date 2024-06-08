@@ -13,4 +13,5 @@ The releases are currently Windows-only.
 [Click here to go to the download page for the latest release.](https://github.com/joaovitorbf/ynodesktop/releases/latest)
 
 ## [YNOproject](https://github.com/ynoproject)
-Click on the heading to check out the Yume Nikki Online Project!
+Click on the heading to check out the Yume Nikki Online Project!  
+Make sure to check out Collective Unconscious, YNO's own multiplayer collaborative Yume Nikki Fangame!
