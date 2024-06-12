@@ -1,9 +1,4 @@
-
-  
-
-# YNOdesktop
-
-  
+ 
 
 ![ynodesk](https://user-images.githubusercontent.com/2998216/201456135-270da105-a4fa-4976-a69a-3a69e5d3fe59.png)
 
@@ -43,7 +38,7 @@ The releases are currently Windows-only.
 
   
 
-## Installation
+## Development Setup
 
 To set up the project locally, you need to have [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/) installed. Then follow these steps:
 
@@ -87,7 +82,7 @@ To build the project, use the following command:
 
 ```sh
 
-yarn  dist
+yarn dist
 
 ```
 
@@ -101,7 +96,7 @@ This will create the distributable files in the `dist` directory.
 
 -  `package.json`: Contains project metadata and dependencies.
 
--  `yarn.lock`: Dependency lock file to ensure consistent installs.
+-  `yarn.lock`: Dependency lock file to ensure consistent setups.
 
   
 
@@ -119,4 +114,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## YNOproject
 
-Click on the heading to check out the [Yume Nikki Online Project](https://github.com/ynoproject)! Make sure to check out Collective Unconscious, YNO's own multiplayer collaborative Yume Nikki Fangame!
+Click on the heading to check out the [Yume Nikki Online Project](https://github.com/ynoproject)!  
+Make sure to check out Collective Unconscious, YNO's own multiplayer collaborative Yume Nikki Fangame!
