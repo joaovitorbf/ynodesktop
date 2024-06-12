@@ -1,5 +1,7 @@
 module.exports = function (win) {
-    win.webContents.executeJavaScript(`
+  win.webContents
+    .executeJavaScript(
+      `
         function checkForTitleBar() {
             if (document.querySelector('#ynod-titlebar')) {
                 return true;
@@ -7,14 +9,16 @@ module.exports = function (win) {
             return false;
         }
         checkForTitleBar();
-    `).then((hasTitleBar) => {
-        if (!hasTitleBar) {
-            createTitleBar();
-        }
+    `
+    )
+    .then((hasTitleBar) => {
+      if (!hasTitleBar) {
+        createTitleBar();
+      }
     });
 
-    function createTitleBar() {
-        win.webContents.executeJavaScript(`
+  function createTitleBar() {
+    win.webContents.executeJavaScript(`
         document.body.insertAdjacentHTML('afterBegin', \`
 
         <div id="ynod-titlebar">
@@ -40,7 +44,7 @@ module.exports = function (win) {
                 </div>
             </div>
         </div>
-
+        
         <style>
             #ynod-titlebar {
                 position: sticky;
@@ -85,7 +89,7 @@ module.exports = function (win) {
         \`)
         `);
 
-        win.webContents.executeJavaScript(`
+    win.webContents.executeJavaScript(`
             function updateTitle() {
                 document.querySelector('#content')?.scrollTo(0,0)
                 if (document.title != "YNOproject" && document.title.includes("YNOproject")) {
@@ -99,5 +103,5 @@ module.exports = function (win) {
             updateTitle();
             setInterval(updateTitle, 1000);
         `);
-    }
-}
+  }
+};
