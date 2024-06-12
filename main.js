@@ -140,6 +140,16 @@ const createWindow = () => {
       document.querySelector('#content')?.scrollTo(0,0)}`); // Disable scroll ingame
   });
 
+  // refocus the window to prevent the game from pausing
+  win.on('blur', () => {
+    win.focus();
+  });
+
+  win.on('minimize', () => {
+    win.restore();
+  });
+  // refocus the window to prevent the game from pausing
+
   win.webContents.on("did-start-loading", () => {
     titlebar(win); // Custom titlebar hack
   });
