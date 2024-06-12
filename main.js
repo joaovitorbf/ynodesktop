@@ -1,4 +1,4 @@
-const { app, BrowserWindow, session, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, session, ipcMain, dialog, shell } = require("electron");
 const contextMenu = require("electron-context-menu");
 const DiscordRPC = require("discord-rpc");
 const Store = require("electron-store");
@@ -104,7 +104,7 @@ const mappedIcons = [
   "oversomnia",
   "yumetsushin",
   "nostalgic",
-  "collectiveunconscious"
+  "collectiveunconscious",
 ];
 
 const createWindow = () => {
@@ -118,6 +118,7 @@ const createWindow = () => {
     titleBarStyle: "hidden",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      backgroundThrottling: false
     },
   });
   var loopInterval = null;
@@ -138,6 +139,21 @@ const createWindow = () => {
       .executeJavaScript(`if (document.title != "Yume Nikki Online Project") {
       document.getElementById('content').style.overflow = 'hidden'
       document.querySelector('#content')?.scrollTo(0,0)}`); // Disable scroll ingame
+  });
+
+  win.webContents.on('devtools-opened', () => {
+    win.webContents.send('log-app-version', app.getVersion());
+  });
+
+  // open wiki links in a web browser for better readability, but open maps in a new electron window
+  // https://pradyothkukkapalli.com/tech/open-external-urls-electron/
+  win.webContents.setWindowOpenHandler((details) => {
+    var url = details.url;
+    if (url.startsWith("https://yume.wiki") && !url.endsWith(".png")) {
+      shell.openExternal(details.url); // Open URL in user's browser.
+      return { action: "deny" }; // Prevent the app from opening the URL.
+    }
+    return { action: "allow" };
   });
 
   win.webContents.on("did-start-loading", () => {
@@ -195,8 +211,40 @@ function clientLoop(win) {
 }
 
 function isConnected(text) {
-  let privatemodes = ['وضع الخاص', 'Private Mode', 'Private Mode', 'Private Mode', 'Mode privé', 'Private Mode', 'プライベートモード', '비공 개 모드', 'Tryb prywatny', 'Modo Privado', 'Private Mode', 'Приватный режим', 'Private Mode', 'Riêng tư', '私密模式']
-  let connecteds = ['متصل', 'Verbunden', 'Connected', 'Conectado', 'Connecté(e)', 'Connesso', '接続済み', '연결됨', 'Połączony', 'Conectado', 'Conectat', 'В сети', 'Bağlı', 'Đã kết nối', '已连接']
+  let privatemodes = [
+    "وضع الخاص",
+    "Private Mode",
+    "Private Mode",
+    "Private Mode",
+    "Mode privé",
+    "Private Mode",
+    "プライベートモード",
+    "비공 개 모드",
+    "Tryb prywatny",
+    "Modo Privado",
+    "Private Mode",
+    "Приватный режим",
+    "Private Mode",
+    "Riêng tư",
+    "私密模式",
+  ];
+  let connecteds = [
+    "متصل",
+    "Verbunden",
+    "Connected",
+    "Conectado",
+    "Connecté(e)",
+    "Connesso",
+    "接続済み",
+    "연결됨",
+    "Połączony",
+    "Conectado",
+    "Conectat",
+    "В сети",
+    "Bağlı",
+    "Đã kết nối",
+    "已连接",
+  ];
 
   if (privatemodes.includes(text) || connecteds.includes(text)) {
     return true;
@@ -205,16 +253,16 @@ function isConnected(text) {
 }
 
 function retryConnection(err) {
-  console.log('Retry IPC')
-  console.log(err)
+  console.log("Retry IPC");
+  console.log(err);
   client = new DiscordRPC.Client({ transport: "ipc" });
   client.login({ clientId: "1028080411772977212" }).catch(console.error);
 }
 
 function updatePresence(web, gamename = null) {
   web.executeJavaScript("window.onbeforeunload=null;");
-  console.log('Update Presence')
-  console.log(gamename)
+  console.log("Update Presence");
+  console.log(gamename);
 
   if (gamename == null) {
     client
@@ -263,18 +311,19 @@ function updatePresence(web, gamename = null) {
           .toLowerCase()
           .replace(" ", "")
           .replace(".", "");
-        let buttonGame = gamename
-        
+        let buttonGame = gamename;
+
         // There is a length limit for activity buttons of 32 chars
         // so we need to shorten the game name
         if (gamename == "Collective Unconscious") {
-          buttonGame = "C.U."
-        }
-        else if (gamename.length > 32) {
-          buttonGame = gamename.slice(0, 28) + "..."
+          buttonGame = "C.U.";
+        } else if (gamename.length > 32) {
+          buttonGame = gamename.slice(0, 28) + "...";
         }
 
-        let activityButtons = [{ label: "Play " + buttonGame + " online", url: data.url }];
+        let activityButtons = [
+          { label: "Play " + buttonGame + " online", url: data.url },
+        ];
         client
           .setActivity({
             largeImageKey: mappedIcons.includes(condensedName)
