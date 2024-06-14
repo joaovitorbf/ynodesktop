@@ -84,13 +84,13 @@ contextMenu({
   ],
 });
 
-var client = new DiscordRPC.Client({ transport: "ipc" });
+let client = new DiscordRPC.Client({ transport: "ipc" });
 client.login({ clientId: "1028080411772977212" }).catch(console.error);
 
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1052,
-    height: 768 + 30, // 30px for titlebar
+    height: 798, // 30px for titlebar
     title: "Yume Nikki Online Project",
     icon: "logo.png",
     resizable: true,
@@ -101,9 +101,12 @@ const createWindow = () => {
       backgroundThrottling: false,
     },
   });
-  var loopInterval = null;
+
+  let loopInterval = null;
   win.setMenu(null);
   win.setTitle("Yume Nikki Online Project");
+
+  win.webContents.setMaxListeners(20);
 
   win.on("closed", () => {
     saveSession();
@@ -128,7 +131,7 @@ const createWindow = () => {
   // open wiki links in a web browser for better readability, but open maps in a new electron window
   // https://pradyothkukkapalli.com/tech/open-external-urls-electron/
   win.webContents.setWindowOpenHandler((details) => {
-    var url = details.url;
+    const url = details.url;
     if (url.startsWith("https://yume.wiki") && !url.endsWith(".png")) {
       shell.openExternal(details.url); // Open URL in user's browser.
       return { action: "deny" }; // Prevent the app from opening the URL.
@@ -148,7 +151,7 @@ const createWindow = () => {
   });
 };
 
-var isMax = false;
+let isMax = false;
 
 app.whenReady().then(() => {
   // Load login session from disk
@@ -161,15 +164,21 @@ app.whenReady().then(() => {
     });
   }
   ipcMain.on("minimize", () => {
-    BrowserWindow.getFocusedWindow().minimize();
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      focusedWindow.minimize();
+    }
   });
   ipcMain.on("maximize", () => {
-    if (isMax) {
-      BrowserWindow.getFocusedWindow().unmaximize();
-    } else {
-      BrowserWindow.getFocusedWindow().maximize();
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      if (isMax) {
+        focusedWindow.unmaximize();
+      } else {
+        focusedWindow.maximize();
+      }
+      isMax = !isMax;
     }
-    isMax = !isMax;
   });
   createWindow();
 });
@@ -177,9 +186,9 @@ app.whenReady().then(() => {
 function clientLoop(win) {
   const web = win.webContents;
   web.executeJavaScript(`document.title`).then((title) => {
-    let splitTitle = title.split(" Online ");
-    if (splitTitle[1]?.trim() == "- YNOproject") {
-      if (splitTitle[0].trim() == "ゆめ2っき") {
+    const splitTitle = title.split(" Online ");
+    if (splitTitle[1]?.trim() === "- YNOproject") {
+      if (splitTitle[0].trim() === "ゆめ2っき") {
         updatePresence(web, client, "Yume 2kki");
       } else {
         updatePresence(web, client, splitTitle[0].trim());
@@ -195,7 +204,7 @@ function saveSession() {
     .get({ url: "https://ynoproject.net" })
     .then((cookies) => {
       const sess = cookies.find(
-        (cookie) => cookie.name == "ynoproject_sessionId"
+        (cookie) => cookie.name === "ynoproject_sessionId"
       );
       if (sess) store.set("ynoproject_sessionId", sess.value);
     });

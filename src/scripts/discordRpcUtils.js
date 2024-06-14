@@ -1,7 +1,5 @@
 const DiscordRPC = require("discord-rpc");
 
-let client;
-
 const mappedIcons = [
   "amillusion",
   "answeredprayers",
@@ -69,7 +67,11 @@ const isConnected = (text) => {
   return privatemodes.includes(text) || connecteds.includes(text);
 };
 
-const retryConnection = (err) => {
+const retryConnection = (client, err) => {
+  if (err.message.includes('RPC_CONNECTION_TIMEOUT')) {
+    console.log("RPC_CONNECTION_TIMEOUT detected, not retrying.");
+    return;
+  }
   console.log("Retry IPC");
   console.log(err);
   client = new DiscordRPC.Client({ transport: "ipc" });
@@ -92,7 +94,7 @@ const updatePresence = (web, client, gamename = null) => {
         instance: false,
         buttons: [{ label: "Play YNOproject", url: `https://ynoproject.net/` }],
       })
-      .catch(retryConnection);
+      .catch((err) => retryConnection(client, err));
   } else {
     web
       .executeJavaScript(
@@ -156,7 +158,7 @@ const updatePresence = (web, client, gamename = null) => {
             instance: false,
             buttons: activityButtons,
           })
-          .catch(retryConnection);
+          .catch((err) => retryConnection(client, err));
       });
   }
 };
