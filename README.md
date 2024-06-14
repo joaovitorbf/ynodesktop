@@ -1,15 +1,14 @@
+
 ![ynodesk](https://user-images.githubusercontent.com/2998216/201456135-270da105-a4fa-4976-a69a-3a69e5d3fe59.png)
 
-A desktop client for [Yume Nikki Online](https://ynoproject.net/) with Discord Rich Presence. Show your friends what game you're playing and what room you're in. Also looks pretty cool as an installed program.
+A desktop client for [Yume Nikki Online](https://ynoproject.net/) with optional Discord Rich Presence. Show your friends what game you're playing and what room you're in. Also looks pretty cool as an installed program.
 
-Created as a simple Electron wrapper around the website, with `discord-rpc` and some hacks to make save exporting/importing work.
+Created as a simple Electron wrapper around the website, with optional `discord-rpc` integration and some hacks to make save exporting/importing work.
 
 ## Features
 
-- Display your game status and room information to friends on Discord.
-
+- Optional Discord Rich Presence to display your game status and room information to friends on Discord.
 - Easy installation and setup.
-
 - Smooth integration with Yume Nikki Online.
 
 ## Rich Presence
@@ -61,17 +60,12 @@ This will create the distributable files in the `dist` directory.
 ## Project Structure
 
 - `main.js`: The main entry point of the application.
-
+- `main-nodrpc.js`: The main entry point of the no Discord RPC version of the application.
 - `preload.js`: A script that runs before the main process, often used to set up initial configurations or preload certain resources.
-
 - `scripts/discordRpcUtils.js`: Utility functions for handling Discord RPC (Remote Procedure Call) integrations.
-
 - `scripts/promptinjection.js`: Handles prompt injection logic for the application.
-
 - `scripts/titlebar.js`: Manages the title bar functionality and customization.
-
 - `package.json`: Contains project metadata and dependencies.
-
 - `yarn.lock`: Dependency lock file to ensure consistent setups.
 
 ## Contributing
