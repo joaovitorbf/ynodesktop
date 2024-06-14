@@ -76,8 +76,7 @@ const retryConnection = (client, err) => {
 
 const updatePresence = (web, client, gamename = null) => {
   if (!client) return;
-
-  web.executeJavaScript("window.onbeforeunload=null;");
+  
   console.log("Update Presence");
   console.log(gamename);
 

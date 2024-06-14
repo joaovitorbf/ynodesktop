@@ -7,11 +7,9 @@ const {
   shell,
 } = require("electron");
 const contextMenu = require("electron-context-menu");
-const DiscordRPC = require("discord-rpc");
 const Store = require("electron-store");
 const promptInjection = require("./scripts/promptinjection");
 const titlebar = require("./scripts/titlebar");
-const { updatePresence } = require("./scripts/discordRpcUtils");
 const path = require("path");
 
 const store = new Store();
@@ -84,9 +82,6 @@ contextMenu({
   ],
 });
 
-let client = new DiscordRPC.Client({ transport: "ipc" });
-client.login({ clientId: "1028080411772977212" }).catch(console.error);
-
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1052,
@@ -105,23 +100,19 @@ const createWindow = () => {
   mainWindow.setMenu(null);
   mainWindow.setTitle("Yume Nikki Online Project");
 
-  //mainWindow.webContents.setMaxListeners(20);
-
-  mainWindow.on("closed", () => {
+  mainWindow.on('close', () => {
     saveSession();
-    client.clearActivity();
-    client.destroy();
     app.quit();
   });
 
   mainWindow.webContents.on("did-finish-load", () => {
     promptInjection(mainWindow); // Custom prompt hack
     mainWindow.webContents.executeJavaScript(`
-      if (document.title != "Yume Nikki Online Project") {
-        document.getElementById('content').style.overflow = 'hidden';
-        document.querySelector('#content')?.scrollTo(0,0);
-      }
-    `); // Disable scroll ingame
+        if (document.title != "Yume Nikki Online Project") {
+          document.getElementById('content').style.overflow = 'hidden';
+          document.querySelector('#content')?.scrollTo(0,0);
+        }
+      `); // Disable scroll ingame
   });
 
   mainWindow.webContents.on("devtools-opened", () => {
@@ -149,13 +140,11 @@ const createWindow = () => {
 
   // better way to do it than in updatePresence function
   // see: https://stackoverflow.com/a/62426970
-  mainWindow.webContents.on("will-prevent-unload", (event) => {
-    event.preventDefault();
+  mainWindow.webContents.on('will-prevent-unload', (event) => {
+    event.preventDefault()
   });
 
-  mainWindow.loadURL("https://ynoproject.net/").then(() => {
-    clientLoop(mainWindow);
-  });
+  mainWindow.loadURL("https://ynoproject.net/");
 };
 
 let isMax = false;
@@ -188,28 +177,6 @@ app.whenReady().then(() => {
   });
   createWindow();
 });
-
-function clientLoop(win) {
-  const loop = () => {
-    const web = win.webContents;
-    web.executeJavaScript(`document.title`).then((title) => {
-      const splitTitle = title.split(" Online ");
-      if (splitTitle[1]?.trim() === "- YNOproject") {
-        if (splitTitle[0].trim() === "ゆめ2っき") {
-          updatePresence(web, client, "Yume 2kki");
-        } else {
-          updatePresence(web, client, splitTitle[0].trim());
-        }
-      } else {
-        updatePresence(web, client);
-      }
-    });
-
-    setTimeout(loop, 1500); // Add a 1000ms sleep interval (1 second)
-  };
-
-  loop();
-}
 
 function saveSession() {
   session.defaultSession.cookies
