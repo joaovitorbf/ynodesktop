@@ -68,10 +68,6 @@ const isConnected = (text) => {
 };
 
 const retryConnection = (client, err) => {
-  if (err.message.includes('RPC_CONNECTION_TIMEOUT')) {
-    console.log("RPC_CONNECTION_TIMEOUT detected, not retrying.");
-    return;
-  }
   console.log("Retry IPC");
   console.log(err);
   client = new DiscordRPC.Client({ transport: "ipc" });

@@ -28,11 +28,11 @@
         "appx"
       ]
     },
-    "icon": "logo.ico",
+    "icon": "assets/logo.ico",
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "logo.ico"
+      "installerIcon": "assets/logo.ico"
     },
     "appx": {
       "identityName": "51567jvbf.YNOdesktop",

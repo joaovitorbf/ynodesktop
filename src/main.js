@@ -15,11 +15,11 @@ const { updatePresence } = require("./scripts/discordRpcUtils");
 const path = require("path");
 
 const store = new Store();
+
 contextMenu({
   showSelectAll: false,
   showSearchWithGoogle: false,
   showInspectElement: false,
-
   append: (defaultActions, params, browserWindow) => [
     {
       label: "Force Reload",
@@ -92,7 +92,7 @@ const createWindow = () => {
     width: 1052,
     height: 798, // 30px for titlebar
     title: "Yume Nikki Online Project",
-    icon: "logo.png",
+    icon: "assets/logo.png",
     resizable: true,
     frame: true,
     titleBarStyle: "hidden",
@@ -102,7 +102,6 @@ const createWindow = () => {
     },
   });
 
-  let loopInterval = null;
   win.setMenu(null);
   win.setTitle("Yume Nikki Online Project");
 
@@ -111,30 +110,35 @@ const createWindow = () => {
   win.on("closed", () => {
     saveSession();
     client.clearActivity();
-    clearInterval(loopInterval);
     client.destroy();
     win.destroy();
   });
 
   win.webContents.on("did-finish-load", () => {
     promptInjection(win); // Custom prompt hack
-    win.webContents
-      .executeJavaScript(`if (document.title != "Yume Nikki Online Project") {
-      document.getElementById('content').style.overflow = 'hidden'
-      document.querySelector('#content')?.scrollTo(0,0)}`); // Disable scroll ingame
+    win.webContents.executeJavaScript(`
+      if (document.title != "Yume Nikki Online Project") {
+        document.getElementById('content').style.overflow = 'hidden';
+        document.querySelector('#content')?.scrollTo(0,0);
+      }
+    `); // Disable scroll ingame
   });
 
   win.webContents.on("devtools-opened", () => {
     win.webContents.send("log-app-version", app.getVersion());
   });
 
-  // open wiki links in a web browser for better readability, but open maps in a new electron window
-  // https://pradyothkukkapalli.com/tech/open-external-urls-electron/
   win.webContents.setWindowOpenHandler((details) => {
-    const url = details.url;
-    if (url.startsWith("https://yume.wiki") && !url.endsWith(".png")) {
-      shell.openExternal(details.url); // Open URL in user's browser.
-      return { action: "deny" }; // Prevent the app from opening the URL.
+    const url = details.url.toLowerCase();
+    const imageExtensions = [".png", ".jpg", ".jpeg"];
+
+    if (url.startsWith("https://yume.wiki")) {
+      const isImage = imageExtensions.some((ext) => url.endsWith(ext));
+
+      if (!isImage) {
+        shell.openExternal(details.url); // Open URL in user's browser.
+        return { action: "deny" }; // Prevent the app from opening the URL.
+      }
     }
     return { action: "allow" };
   });
@@ -144,17 +148,13 @@ const createWindow = () => {
   });
 
   win.loadURL("https://ynoproject.net/").then(() => {
-    loopInterval = setInterval(() => {
-      clientLoop(win);
-      // win.webContents.openDevTools();
-    }, 1000);
+    clientLoop(win);
   });
 };
 
 let isMax = false;
 
 app.whenReady().then(() => {
-  // Load login session from disk
   if (store.has("ynoproject_sessionId")) {
     session.defaultSession.cookies.set({
       url: "https://ynoproject.net",
@@ -184,19 +184,25 @@ app.whenReady().then(() => {
 });
 
 function clientLoop(win) {
-  const web = win.webContents;
-  web.executeJavaScript(`document.title`).then((title) => {
-    const splitTitle = title.split(" Online ");
-    if (splitTitle[1]?.trim() === "- YNOproject") {
-      if (splitTitle[0].trim() === "ゆめ2っき") {
-        updatePresence(web, client, "Yume 2kki");
+  const loop = () => {
+    const web = win.webContents;
+    web.executeJavaScript(`document.title`).then((title) => {
+      const splitTitle = title.split(" Online ");
+      if (splitTitle[1]?.trim() === "- YNOproject") {
+        if (splitTitle[0].trim() === "ゆめ2っき") {
+          updatePresence(web, client, "Yume 2kki");
+        } else {
+          updatePresence(web, client, splitTitle[0].trim());
+        }
       } else {
-        updatePresence(web, client, splitTitle[0].trim());
+        updatePresence(web, client);
       }
-    } else {
-      updatePresence(web, client);
-    }
-  });
+    });
+
+    setTimeout(loop, 1500); // Add a 1000ms sleep interval (1 second)
+  };
+
+  loop();
 }
 
 function saveSession() {
