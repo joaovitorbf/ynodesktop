@@ -13,6 +13,7 @@ const promptInjection = require("./scripts/promptinjection");
 const titlebar = require("./scripts/titlebar");
 const { updatePresence } = require("./scripts/discordRpcUtils");
 const path = require("path");
+const { parseGameName, isDreamWorldMap } = require("./scripts/utils");
 
 const store = new Store();
 
@@ -105,7 +106,7 @@ const createWindow = () => {
   mainWindow.setMenu(null);
   mainWindow.setTitle("Yume Nikki Online Project");
 
-  //mainWindow.webContents.setMaxListeners(20);
+  mainWindow.webContents.setMaxListeners(20);
 
   mainWindow.on("closed", () => {
     saveSession();
@@ -130,12 +131,9 @@ const createWindow = () => {
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     const url = details.url.toLowerCase();
-    const imageExtensions = [".png", ".jpg", ".jpeg"];
 
     if (url.startsWith("https://yume.wiki")) {
-      const isImage = imageExtensions.some((ext) => url.endsWith(ext));
-
-      if (!isImage) {
+      if (!isDreamWorldMap(url)) {
         shell.openExternal(details.url); // Open URL in user's browser.
         return { action: "deny" }; // Prevent the app from opening the URL.
       }
@@ -152,6 +150,15 @@ const createWindow = () => {
   mainWindow.webContents.on("will-prevent-unload", (event) => {
     event.preventDefault();
   });
+
+/*   mainWindow.webContents.setWindowOpenHandler(async ({ url }) => {
+    const gameName = parseGameName(url);
+    if (gameName) {
+      mainWindow.loadURL(`https://ynoproject.net/${gameName}`);
+      return { action: "deny" };
+    }
+    return { action: "allow" }; // Allow navigation if URL does not match
+  }); */
 
   mainWindow.loadURL("https://ynoproject.net/").then(() => {
     clientLoop(mainWindow);
