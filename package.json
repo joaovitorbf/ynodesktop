@@ -1,12 +1,15 @@
 {
   "name": "ynodesktop",
-  "version": "1.1.9",
-  "description": "A Yume Nikki Online desktop client with Discord Rich Presence",
-  "main": "main.js",
+  "version": "1.2.0",
+  "description": "A Yume Nikki Online desktop client with optional Discord Rich Presence",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
+    "start-nodrpc": "electron src/main-nodrpc.js",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "pack-nodrpc": "electron-builder --config build-nodrpc.js --dir",
+    "dist-nodrpc": "electron-builder --config build-nodrpc.js"
   },
   "author": "jvbf",
   "license": "MIT",
@@ -28,11 +31,11 @@
         "appx"
       ]
     },
-    "icon": "logo.ico",
+    "icon": "assets/logo.ico",
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "logo.ico"
+      "installerIcon": "assets/logo.ico"
     },
     "appx": {
       "identityName": "51567jvbf.YNOdesktop",
@@ -42,9 +45,11 @@
     }
   },
   "dependencies": {
-    "discord-rpc": "^4.0.1",
     "electron-context-menu": "^3.6.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.2.0"
+  },
+  "optionalDependencies": {
+    "discord-rpc": "^4.0.1"
   }
 }
