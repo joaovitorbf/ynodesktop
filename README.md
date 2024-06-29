@@ -43,8 +43,16 @@ yarn install
 
 3. Run the application:
 
+To run the application, use the following command:
+
 ```sh
 yarn start
+```
+
+If you prefer to run the application without Discord RPC, use the following command:
+
+```sh
+yarn start-nodrpc
 ```
 
 ## Building the Project
@@ -53,6 +61,12 @@ To build the project, use the following command:
 
 ```sh
 yarn dist
+```
+
+If you need to build the project without Discord RPC, use the following command:
+
+```sh
+yarn dist-nodrpc
 ```
 
 This will create the distributable files in the `dist` directory.
